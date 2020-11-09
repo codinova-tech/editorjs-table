@@ -12,17 +12,17 @@ Table Block for the [Editor.js](https://editorjs.io).
 Get the package
 
 ```shell
-npm i --save-dev @editorjs/table
+npm i --save-dev editorjs-table
 ```
 or
 ```shell
-yarn add @editorjs/table --dev
+yarn add editorjs-table --dev
 ```
 
 Include module in your application
 
 ```javascript
-const Table = require('@editorjs/table');
+const Table = require('editorjs-table');
 ```
 
 ### Upload to your project's source dir
