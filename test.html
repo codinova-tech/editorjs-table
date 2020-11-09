@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Test of Table</title>
+
+    <style>
+
+        body, html {
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #editorjs {
+            width: 800px;
+            margin-top: 10px;
+        }
+
+    </style>
+  <link href="src/styles/table-preview.css" rel="stylesheet" />
+</head>
+<body>
+
+<div id="editorjs"></div>
+</div>
+<div class="ce-example__output">
+  <pre class="ce-example__output-content" id="output"></pre>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+<script src="dist/bundle.js"></script>
+<script>
+    const editor = new EditorJS({
+      autofocus: true,
+      data: {
+        version: '2.18.0',
+      },
+      placeholder: 'Table tool test',
+      holder: 'editorjs',
+      tools: {
+        table: {
+          class: Table,
+          inlineToolbar: true,
+          config: {
+            rows: 0,
+            cols: 0
+          },
+          
+        },
+      },
+      data : {
+        blocks: [
+        
+        ]
+      },
+    })
+</script>
+</body>
+</html>

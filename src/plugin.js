@@ -1,0 +1,300 @@
+const { TableConstructor } = require('./tableConstructor');
+const toolboxIcon = require('./img/toolboxIcon.svg');
+const insertColBefore = require('./img/insertColBeforeIcon.svg');
+const insertColAfter = require('./img/indertColAfterIcon.svg');
+const insertRowBefore = require('./img/insertRowBeforeIcon.svg');
+const insertRowAfter = require('./img/insertRowAfter.svg');
+const deleteRow = require('./img/deleteRowIcon.svg');
+const deleteCol = require('./img/deleteColIcon.svg');
+
+const Icons = {
+  Toolbox: toolboxIcon,
+  InsertColBefore: insertColBefore,
+  InsertColAfter: insertColAfter,
+  InsertRowBefore: insertRowBefore,
+  InsertRowAfter: insertRowAfter,
+  DeleteRow: deleteRow,
+  DeleteCol: deleteCol
+};
+
+const CSS = {
+  input: 'tc-table__inp'
+};
+
+/**
+ *  Tool for table's creating
+ *  @typedef {object} TableData - object with the data transferred to form a table
+ *  @property {string[][]} content - two-dimensional array which contains table content
+ */
+class Table {
+  /**
+   * Allow to press Enter inside the CodeTool textarea
+   * @returns {boolean}
+   * @public
+   */
+  static get enableLineBreaks() {
+    return true;
+  }
+
+  /**
+   * Get Tool toolbox settings
+   * icon - Tool icon's SVG
+   * title - title to show in toolbox
+   *
+   * @return {{icon: string, title: string}}
+   */
+  static get toolbox() {
+    return {
+      icon: Icons.Toolbox,
+      title: 'Table'
+    };
+  }
+
+  /**
+   * Render plugin`s main Element and fill it with saved data
+   * @param {TableData} data — previously saved data
+   * @param {object} config - user config for Tool
+   * @param {object} api - Editor.js API
+   */
+  constructor({ data, config, api }) {
+    this.api = api;
+    this.wrapper = undefined;
+    this.config = config;
+    this.data = data;
+    this._tableConstructor = new TableConstructor(data, config, api);
+
+    this.actions = [
+      {
+        actionName: 'InsertColBefore',
+        icon: Icons.InsertColBefore,
+        label: 'Insert column before'
+      },
+      {
+        actionName: 'InsertColAfter',
+        icon: Icons.InsertColAfter,
+        label: 'Insert column after'
+      },
+      {
+        actionName: 'InsertRowBefore',
+        icon: Icons.InsertRowBefore,
+        label: 'Insert row before'
+      },
+      {
+        actionName: 'InsertRowAfter',
+        icon: Icons.InsertRowAfter,
+        label: 'Insert row after'
+      },
+      {
+        actionName: 'DeleteRow',
+        icon: Icons.DeleteRow,
+        label: 'Delete row'
+      },
+      {
+        actionName: 'DeleteCol',
+        icon: Icons.DeleteCol,
+        label: 'Delete column'
+      }
+    ];
+  }
+
+  /**
+   * perform selected action
+   * @param actionName {string} - action name
+   * @return {undefined}
+   */
+  performAction(actionName) {
+    switch (actionName) {
+      case 'InsertColBefore':
+        this._tableConstructor.table.insertColumnBefore();
+        break;
+      case 'InsertColAfter':
+        this._tableConstructor.table.insertColumnAfter();
+        break;
+      case 'InsertRowBefore':
+        this._tableConstructor.table.insertRowBefore();
+        break;
+      case 'InsertRowAfter':
+        this._tableConstructor.table.insertRowAfter();
+        break;
+      case 'DeleteRow':
+        this._tableConstructor.table.deleteRow();
+        break;
+      case 'DeleteCol':
+        this._tableConstructor.table.deleteColumn();
+        break;
+    }
+  }
+
+  /**
+   * render actions toolbar
+   * @returns {HTMLDivElement}
+   */
+  renderSettings() {
+    const wrapper = document.createElement('div');
+
+    this.actions.forEach(({ actionName, label, icon }) => {
+      const title = this.api.i18n.t(label);
+      const button = document.createElement('div');
+
+      button.classList.add('cdx-settings-button');
+      button.innerHTML = icon;
+      button.title = actionName;
+
+      this.api.tooltip.onHover(button, title, {
+        placement: 'top'
+      });
+      button.addEventListener('click', this.performAction.bind(this, actionName));
+      wrapper.appendChild(button);
+    });
+
+    return wrapper;
+  }
+
+  /**
+   * Return Tool's view
+   * @returns {HTMLDivElement}
+   * @public
+   */
+  render() {
+    this.wrapper = document.createElement('div');
+    
+    if(this.data && this.data.content){
+      //Creates table if Data is Present
+      this._createTableConfigration();
+    } else {
+      // Create table preview if New table is initialised
+    this.wrapper.classList.add('table-selector');
+    this.wrapper.setAttribute('data-hoveredClass', 'm,n');
+    const rows = 6;
+    this.createCells(rows);
+    //Hover to select cells 
+    if(this.wrapper.className ==='table-selector') {
+      this.wrapper.addEventListener('mouseover', (event) => {
+        const selectedCell = event.target.id;
+        if(selectedCell.length) {
+          const selectedRow = event.target.attributes.row.value;
+          const selectedColumn = event.target.attributes.column.value;
+          this.wrapper.setAttribute('data-hoveredClass', `${selectedRow},${selectedColumn}`);
+        }
+      }) 
+    }
+    //set the select cell to load table config
+    this.wrapper.addEventListener('click', (event) => {
+      const selectedCell = event.target.id;
+
+      if(selectedCell.length) {
+        const selectedRow = event.target.attributes.row.value;
+        const selectedColumn = event.target.attributes.column.value;
+        this.wrapper.removeEventListener('mouseover', () => {});
+        this.config.rows = selectedRow;
+        this.config.cols = selectedColumn;
+        this._createTableConfigration();
+      }
+    });
+    }
+    
+    return this.wrapper;
+
+  }
+  createCells(rows) {
+    if(rows !== 0) {
+      for(let i = 0; i < rows; i++) {
+        let rowDiv = document.createElement('div');
+        rowDiv.setAttribute('class', 'table-row');
+        for (let j = 0; j< rows; j++) {
+          let columnDivContainer = document.createElement('div');
+          let columnDiv = document.createElement('div');
+          columnDivContainer.setAttribute('class', 'table-cell-container');
+          columnDiv.setAttribute('class', 'table-cell');
+          columnDivContainer.setAttribute('id', `row_${i+1}_cell_${j+1}`);
+          columnDivContainer.setAttribute('column', j+1);
+          columnDivContainer.setAttribute('row', i+1);
+          columnDiv.setAttribute('id', `cell_${j+1}`);
+          columnDiv.setAttribute('column', j+1);
+          columnDiv.setAttribute('row', i+1);
+          columnDivContainer.appendChild(columnDiv);
+          rowDiv.appendChild(columnDivContainer);
+        }
+        this.wrapper.appendChild(rowDiv);
+      }
+    }
+  }
+  _createTableConfigration() {
+    this.wrapper.innerHTML = '';
+    this._tableConstructor = new TableConstructor(this.data, this.config, this.api);
+    this.wrapper.appendChild(this._tableConstructor.htmlElement);
+  }
+  /**
+   * Extract Tool's data from the view
+   * @returns {TableData} - saved data
+   * @public
+   */
+  save(toolsContent) {
+    const table = toolsContent.querySelector('table');
+    const data = [];
+    const rows = table.rows;
+
+    for (let i = 0; i < rows.length; i++) {
+      const row = rows[i];
+      const cols = Array.from(row.cells);
+      const inputs = cols.map(cell => cell.querySelector('.' + CSS.input));
+      const isWorthless = inputs.every(this._isEmpty);
+
+      if (isWorthless) {
+        continue;
+      }
+      data.push(inputs.map(input => input.innerHTML));
+    }
+
+    return {
+      content: data
+    };
+  }
+
+  /**
+   * @private
+   *
+   * Check input field is empty
+   * @param {HTMLElement} input - input field
+   * @return {boolean}
+   */
+  _isEmpty(input) {
+    return !input.textContent.trim();
+  }
+  static get pasteConfig() {
+    return {
+      tags: ['TABLE', 'TR', 'TD', 'TBODY', 'TH'],
+    };
+  }
+  async onPaste(event) {
+    const table = event.detail.data;
+    this.data  = this.pasteHandler(table);
+  }
+  pasteHandler(element) {
+    const {tagName: tag} = element;
+    const data = {
+      content: [],
+      config: {
+        rows: 0,
+        cols: 0
+      }
+    }
+    if(tag ==='TABLE') {
+      const tableBody = Array.from(element.childNodes);
+      const tableRows = Array.from(tableBody[0].childNodes);
+      data.config.rows = tableRows.length;
+      data.content = tableRows.map((tr) => {
+        let tableData = tr.childNodes;
+        data.config.cols = tableData.length;
+        tableData = [...tableData].map((td) => {
+          return td.innerHTML;
+        });
+        return tableData;
+      })
+    }
+    return data;
+  }
+
+}
+
+module.exports = Table;
