@@ -1,11 +1,11 @@
-const { TableConstructor } = require('./tableConstructor');
-const toolboxIcon = require('./img/toolboxIcon.svg');
-const insertColBefore = require('./img/insertColBeforeIcon.svg');
-const insertColAfter = require('./img/indertColAfterIcon.svg');
-const insertRowBefore = require('./img/insertRowBeforeIcon.svg');
-const insertRowAfter = require('./img/insertRowAfter.svg');
-const deleteRow = require('./img/deleteRowIcon.svg');
-const deleteCol = require('./img/deleteColIcon.svg');
+const { TableConstructor } = require("./tableConstructor");
+const toolboxIcon = require("./img/toolboxIcon.svg");
+const insertColBefore = require("./img/insertColBeforeIcon.svg");
+const insertColAfter = require("./img/indertColAfterIcon.svg");
+const insertRowBefore = require("./img/insertRowBeforeIcon.svg");
+const insertRowAfter = require("./img/insertRowAfter.svg");
+const deleteRow = require("./img/deleteRowIcon.svg");
+const deleteCol = require("./img/deleteColIcon.svg");
 
 const Icons = {
   Toolbox: toolboxIcon,
@@ -14,11 +14,11 @@ const Icons = {
   InsertRowBefore: insertRowBefore,
   InsertRowAfter: insertRowAfter,
   DeleteRow: deleteRow,
-  DeleteCol: deleteCol
+  DeleteCol: deleteCol,
 };
 
 const CSS = {
-  input: 'tc-table__inp'
+  input: "tc-table__inp",
 };
 
 /**
@@ -46,7 +46,7 @@ class Table {
   static get toolbox() {
     return {
       icon: Icons.Toolbox,
-      title: 'Table'
+      title: "Table",
     };
   }
 
@@ -65,35 +65,35 @@ class Table {
 
     this.actions = [
       {
-        actionName: 'InsertColBefore',
+        actionName: "InsertColBefore",
         icon: Icons.InsertColBefore,
-        label: 'Insert column before'
+        label: "Insert column before",
       },
       {
-        actionName: 'InsertColAfter',
+        actionName: "InsertColAfter",
         icon: Icons.InsertColAfter,
-        label: 'Insert column after'
+        label: "Insert column after",
       },
       {
-        actionName: 'InsertRowBefore',
+        actionName: "InsertRowBefore",
         icon: Icons.InsertRowBefore,
-        label: 'Insert row before'
+        label: "Insert row before",
       },
       {
-        actionName: 'InsertRowAfter',
+        actionName: "InsertRowAfter",
         icon: Icons.InsertRowAfter,
-        label: 'Insert row after'
+        label: "Insert row after",
       },
       {
-        actionName: 'DeleteRow',
+        actionName: "DeleteRow",
         icon: Icons.DeleteRow,
-        label: 'Delete row'
+        label: "Delete row",
       },
       {
-        actionName: 'DeleteCol',
+        actionName: "DeleteCol",
         icon: Icons.DeleteCol,
-        label: 'Delete column'
-      }
+        label: "Delete column",
+      },
     ];
   }
 
@@ -104,22 +104,22 @@ class Table {
    */
   performAction(actionName) {
     switch (actionName) {
-      case 'InsertColBefore':
+      case "InsertColBefore":
         this._tableConstructor.table.insertColumnBefore();
         break;
-      case 'InsertColAfter':
+      case "InsertColAfter":
         this._tableConstructor.table.insertColumnAfter();
         break;
-      case 'InsertRowBefore':
+      case "InsertRowBefore":
         this._tableConstructor.table.insertRowBefore();
         break;
-      case 'InsertRowAfter':
+      case "InsertRowAfter":
         this._tableConstructor.table.insertRowAfter();
         break;
-      case 'DeleteRow':
+      case "DeleteRow":
         this._tableConstructor.table.deleteRow();
         break;
-      case 'DeleteCol':
+      case "DeleteCol":
         this._tableConstructor.table.deleteColumn();
         break;
     }
@@ -130,20 +130,23 @@ class Table {
    * @returns {HTMLDivElement}
    */
   renderSettings() {
-    const wrapper = document.createElement('div');
+    const wrapper = document.createElement("div");
 
     this.actions.forEach(({ actionName, label, icon }) => {
       const title = this.api.i18n.t(label);
-      const button = document.createElement('div');
+      const button = document.createElement("div");
 
-      button.classList.add('cdx-settings-button');
+      button.classList.add("cdx-settings-button");
       button.innerHTML = icon;
       button.title = actionName;
 
       this.api.tooltip.onHover(button, title, {
-        placement: 'top'
+        placement: "top",
       });
-      button.addEventListener('click', this.performAction.bind(this, actionName));
+      button.addEventListener(
+        "click",
+        this.performAction.bind(this, actionName)
+      );
       wrapper.appendChild(button);
     });
 
@@ -156,62 +159,64 @@ class Table {
    * @public
    */
   render() {
-    this.wrapper = document.createElement('div');
-    
-    if(this.data && this.data.content){
+    this.wrapper = document.createElement("div");
+
+    if (this.data && this.data.content) {
       //Creates table if Data is Present
       this._createTableConfigration();
     } else {
       // Create table preview if New table is initialised
-    this.wrapper.classList.add('table-selector');
-    this.wrapper.setAttribute('data-hoveredClass', 'm,n');
-    const rows = 6;
-    this.createCells(rows);
-    //Hover to select cells 
-    if(this.wrapper.className ==='table-selector') {
-      this.wrapper.addEventListener('mouseover', (event) => {
+      this.wrapper.classList.add("table-selector");
+      this.wrapper.setAttribute("data-hoveredClass", "m,n");
+      const rows = 6;
+      this.createCells(rows);
+      //Hover to select cells
+      if (this.wrapper.className === "table-selector") {
+        this.wrapper.addEventListener("mouseover", (event) => {
+          const selectedCell = event.target.id;
+          if (selectedCell.length) {
+            const selectedRow = event.target.attributes.row.value;
+            const selectedColumn = event.target.attributes.column.value;
+            this.wrapper.setAttribute(
+              "data-hoveredClass",
+              `${selectedRow},${selectedColumn}`
+            );
+          }
+        });
+      }
+      //set the select cell to load table config
+      this.wrapper.addEventListener("click", (event) => {
         const selectedCell = event.target.id;
-        if(selectedCell.length) {
+
+        if (selectedCell.length) {
           const selectedRow = event.target.attributes.row.value;
           const selectedColumn = event.target.attributes.column.value;
-          this.wrapper.setAttribute('data-hoveredClass', `${selectedRow},${selectedColumn}`);
+          this.wrapper.removeEventListener("mouseover", () => {});
+          this.config.rows = selectedRow;
+          this.config.cols = selectedColumn;
+          this._createTableConfigration();
         }
-      }) 
+      });
     }
-    //set the select cell to load table config
-    this.wrapper.addEventListener('click', (event) => {
-      const selectedCell = event.target.id;
-
-      if(selectedCell.length) {
-        const selectedRow = event.target.attributes.row.value;
-        const selectedColumn = event.target.attributes.column.value;
-        this.wrapper.removeEventListener('mouseover', () => {});
-        this.config.rows = selectedRow;
-        this.config.cols = selectedColumn;
-        this._createTableConfigration();
-      }
-    });
-    }
-    
     return this.wrapper;
-
   }
+  
   createCells(rows) {
-    if(rows !== 0) {
-      for(let i = 0; i < rows; i++) {
-        let rowDiv = document.createElement('div');
-        rowDiv.setAttribute('class', 'table-row');
-        for (let j = 0; j< rows; j++) {
-          let columnDivContainer = document.createElement('div');
-          let columnDiv = document.createElement('div');
-          columnDivContainer.setAttribute('class', 'table-cell-container');
-          columnDiv.setAttribute('class', 'table-cell');
-          columnDivContainer.setAttribute('id', `row_${i+1}_cell_${j+1}`);
-          columnDivContainer.setAttribute('column', j+1);
-          columnDivContainer.setAttribute('row', i+1);
-          columnDiv.setAttribute('id', `cell_${j+1}`);
-          columnDiv.setAttribute('column', j+1);
-          columnDiv.setAttribute('row', i+1);
+    if (rows !== 0) {
+      for (let i = 0; i < rows; i++) {
+        let rowDiv = document.createElement("div");
+        rowDiv.setAttribute("class", "table-row");
+        for (let j = 0; j < rows; j++) {
+          let columnDivContainer = document.createElement("div");
+          let columnDiv = document.createElement("div");
+          columnDivContainer.setAttribute("class", "table-cell-container");
+          columnDiv.setAttribute("class", "table-cell");
+          columnDivContainer.setAttribute("id", `row_${i + 1}_cell_${j + 1}`);
+          columnDivContainer.setAttribute("column", j + 1);
+          columnDivContainer.setAttribute("row", i + 1);
+          columnDiv.setAttribute("id", `cell_${j + 1}`);
+          columnDiv.setAttribute("column", j + 1);
+          columnDiv.setAttribute("row", i + 1);
           columnDivContainer.appendChild(columnDiv);
           rowDiv.appendChild(columnDivContainer);
         }
@@ -220,8 +225,12 @@ class Table {
     }
   }
   _createTableConfigration() {
-    this.wrapper.innerHTML = '';
-    this._tableConstructor = new TableConstructor(this.data, this.config, this.api);
+    this.wrapper.innerHTML = "";
+    this._tableConstructor = new TableConstructor(
+      this.data,
+      this.config,
+      this.api
+    );
     this.wrapper.appendChild(this._tableConstructor.htmlElement);
   }
   /**
@@ -230,24 +239,24 @@ class Table {
    * @public
    */
   save(toolsContent) {
-    const table = toolsContent.querySelector('table');
+    const table = toolsContent.querySelector("table");
     const data = [];
     const rows = table.rows;
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
       const cols = Array.from(row.cells);
-      const inputs = cols.map(cell => cell.querySelector('.' + CSS.input));
+      const inputs = cols.map((cell) => cell.querySelector("." + CSS.input));
       const isWorthless = inputs.every(this._isEmpty);
 
       if (isWorthless) {
         continue;
       }
-      data.push(inputs.map(input => input.innerHTML));
+      data.push(inputs.map((input) => input.innerHTML));
     }
 
     return {
-      content: data
+      content: data,
     };
   }
 
@@ -261,40 +270,6 @@ class Table {
   _isEmpty(input) {
     return !input.textContent.trim();
   }
-  static get pasteConfig() {
-    return {
-      tags: ['TABLE', 'TR', 'TD', 'TBODY', 'TH'],
-    };
-  }
-  async onPaste(event) {
-    const table = event.detail.data;
-    this.data  = this.pasteHandler(table);
-  }
-  pasteHandler(element) {
-    const {tagName: tag} = element;
-    const data = {
-      content: [],
-      config: {
-        rows: 0,
-        cols: 0
-      }
-    }
-    if(tag ==='TABLE') {
-      const tableBody = Array.from(element.childNodes);
-      const tableRows = Array.from(tableBody[0].childNodes);
-      data.config.rows = tableRows.length;
-      data.content = tableRows.map((tr) => {
-        let tableData = tr.childNodes;
-        data.config.cols = tableData.length;
-        tableData = [...tableData].map((td) => {
-          return td.innerHTML;
-        });
-        return tableData;
-      })
-    }
-    return data;
-  }
-
 }
 
 module.exports = Table;
