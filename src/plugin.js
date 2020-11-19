@@ -161,10 +161,10 @@ class Table {
   render() {
     this.wrapper = document.createElement("div");
 
-    if (this.data && this.data.content) {
+    if ((this.data && this.data.content)) {
       //Creates table if Data is Present
-      this._createTableConfigration();
-    } else {
+      this._createTableConfiguration();
+    } else  {
       // Create table preview if New table is initialised
       this.wrapper.classList.add("table-selector");
       this.wrapper.setAttribute("data-hoveredClass", "m,n");
@@ -194,7 +194,7 @@ class Table {
           this.wrapper.removeEventListener("mouseover", () => {});
           this.config.rows = selectedRow;
           this.config.cols = selectedColumn;
-          this._createTableConfigration();
+          this._createTableConfiguration();
         }
       });
     }
@@ -224,7 +224,8 @@ class Table {
       }
     }
   }
-  _createTableConfigration() {
+
+  _createTableConfiguration() {
     this.wrapper.innerHTML = "";
     this._tableConstructor = new TableConstructor(
       this.data,
@@ -270,6 +271,44 @@ class Table {
   _isEmpty(input) {
     return !input.textContent.trim();
   }
+
+  static get pasteConfig() {
+    return {
+      tags: ['TABLE', 'TR', 'TD', 'TBODY', 'TH'],
+    };
+  }
+
+  async onPaste(event) {
+    const table = event.detail.data;
+    this.data  = this.pasteHandler(table);
+    this._createTableConfiguration();
+  }
+  
+  pasteHandler(element) {
+    const {tagName: tag} = element;
+    const data = {
+      content: [],
+      config: {
+        rows: 0,
+        cols: 0
+      }
+    }
+    if(tag ==='TABLE') {
+      const tableBody = Array.from(element.childNodes);
+      const tableRows = Array.from(tableBody[0].childNodes);
+      data.config.rows = tableRows.length;
+      data.content = tableRows.map((tr) => {
+        let tableData = tr.childNodes;
+        data.config.cols = tableData.length;
+        tableData = [...tableData].map((td) => {
+          return td.innerHTML;
+        });
+        return tableData;
+      })
+    }
+    return data;
+  }
+
 }
 
 module.exports = Table;

@@ -1,7 +1,7 @@
 {
   "name": "editorjs-table",
   "description": "Table for Editor.js with configurable rows and columns",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "license": "MIT",
   "main": "./dist/bundle.js",
   "scripts": {
@@ -33,6 +33,6 @@
     "style-loader": "^0.23.1",
     "svg-inline-loader": "^0.8.0",
     "webpack": "^4.29.5",
-    "webpack-cli": "^3.2.3"
+    "webpack-cli": "^4.2.0"
   }
 }
