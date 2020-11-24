@@ -242,24 +242,24 @@ class Table {
   save(toolsContent) {
     const table = toolsContent.querySelector("table");
     const data = [];
-    const rows = table.rows;
+    const rows = table ? table.rows : 0;
+    if(rows.length) {
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        const cols = Array.from(row.cells);
+        const inputs = cols.map((cell) => cell.querySelector("." + CSS.input));
+        const isWorthless = inputs.every(this._isEmpty);
 
-    for (let i = 0; i < rows.length; i++) {
-      const row = rows[i];
-      const cols = Array.from(row.cells);
-      const inputs = cols.map((cell) => cell.querySelector("." + CSS.input));
-      const isWorthless = inputs.every(this._isEmpty);
-
-      if (isWorthless) {
-        continue;
-      }
-      data.push(inputs.map((input) => input.innerHTML));
+        if (isWorthless) {
+          continue;
+        }
+        data.push(inputs.map((input) => input.innerHTML));
     }
-
     return {
       content: data,
     };
-  }
+  }  
+}
 
   /**
    * @private
