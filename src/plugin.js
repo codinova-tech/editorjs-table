@@ -149,7 +149,7 @@ class Table {
       );
       wrapper.appendChild(button);
     });
-
+    
     return wrapper;
   }
 
@@ -223,6 +223,10 @@ class Table {
         this.wrapper.appendChild(rowDiv);
       }
     }
+    const hiddenEl = document.createElement('input');
+    hiddenEl.classList.add('hidden-element');
+    hiddenEl.setAttribute('tabindex', 0);
+    this.wrapper.appendChild(hiddenEl);
   }
 
   _createTableConfiguration() {

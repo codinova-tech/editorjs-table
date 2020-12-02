@@ -34,7 +34,10 @@
     overflow: hidden;
   }
 
-
+  &__highlight {
+    background-color: rgba(173, 164, 176, 0.1);
+  }
+  
   tbody tr:first-child td {
     border-top: none;
   }
@@ -52,9 +55,11 @@
   }
 }
 .table-selector {
-  padding: 10px;
   display: flex;
   flex-direction: column;
+  .hidden-element {
+    display: none;
+  }
 }
 .table-row {
   display: flex;
@@ -514,4 +519,9 @@
 [data-hoveredClass="6,6"] #row_6_cell_6 #cell_6 {
   background: #d5e4f9;
   border: 1px solid #c0cffd;
+}
+.ce-block {
+  &--selected &__content {
+    background: transparent;
+  }
 }
