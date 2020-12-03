@@ -66,6 +66,7 @@ export class Table {
    */
   insertColumnAfter() {
     this.insertColumn(1);
+    this.focusCellOnSelectedCell();
   }
 
   /**
@@ -73,6 +74,7 @@ export class Table {
    */
   insertColumnBefore() {
     this.insertColumn();
+    this.focusCellOnSelectedCell();
   }
 
   /**
@@ -80,6 +82,7 @@ export class Table {
    */
   insertRowBefore() {
     this.insertRow();
+    this.focusCellOnSelectedCell();
   }
 
   /**
@@ -87,6 +90,7 @@ export class Table {
    */
   insertRowAfter() {
     this.insertRow(1);
+    this.focusCellOnSelectedCell();
   }
 
   /**
@@ -210,7 +214,6 @@ export class Table {
   _fillCell(cell) {
     cell.classList.add(CSS.cell);
     const content = this._createContenteditableArea();
-
     cell.appendChild(create('div', [ CSS.area ], null, [ content ]));
   }
 
@@ -262,7 +265,9 @@ export class Table {
       ? event.target
       : event.target.closest('td');
   }
-
+  focusCellOnSelectedCell() {
+    this.selectedCell.childNodes[0].childNodes[0].focus();
+  }
   /**
    * @private
    *

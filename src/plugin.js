@@ -148,8 +148,8 @@ class Table {
         this.performAction.bind(this, actionName)
       );
       wrapper.appendChild(button);
+      this._tableConstructor.table.focusCellOnSelectedCell();
     });
-    
     return wrapper;
   }
 
@@ -187,7 +187,6 @@ class Table {
       //set the select cell to load table config
       this.wrapper.addEventListener("click", (event) => {
         const selectedCell = event.target.id;
-
         if (selectedCell.length) {
           const selectedRow = event.target.attributes.row.value;
           const selectedColumn = event.target.attributes.column.value;
