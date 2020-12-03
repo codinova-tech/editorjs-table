@@ -1,7 +1,7 @@
 {
   "name": "editorjs-table",
   "description": "Table for Editor.js with configurable rows and columns",
-  "version": "1.4.6",
+  "version": "1.4.7",
   "license": "MIT",
   "main": "./dist/bundle.js",
   "scripts": {
