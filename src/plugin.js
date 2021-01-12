@@ -312,6 +312,9 @@ class Table {
     return data;
   }
 
+  static get isReadOnlySupported () {
+    return true;
+  }
 }
 
 module.exports = Table;
