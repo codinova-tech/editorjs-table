@@ -35,6 +35,14 @@ class Table {
   static get enableLineBreaks() {
     return true;
   }
+  
+  /**
+   * Notify core that read-only mode is supported
+   * @returns {boolean}
+   */
+  static get isReadOnlySupported () {
+    return true;
+  }
 
   /**
    * Get Tool toolbox settings
@@ -56,12 +64,13 @@ class Table {
    * @param {object} config - user config for Tool
    * @param {object} api - Editor.js API
    */
-  constructor({ data, config, api }) {
+  constructor({ data, config, api, readOnly }) {
     this.api = api;
     this.wrapper = undefined;
     this.config = config;
     this.data = data;
-    this._tableConstructor = new TableConstructor(data, config, api);
+    this.readOnly = readOnly;
+    this._tableConstructor = new TableConstructor(data, config, api, readOnly);
 
     this.actions = [
       {
@@ -261,7 +270,7 @@ class Table {
     return {
       content: data,
     };
-  }  
+  }
 }
 
   /**
@@ -310,10 +319,6 @@ class Table {
       })
     }
     return data;
-  }
-
-  static get isReadOnlySupported () {
-    return true;
   }
 }
 
