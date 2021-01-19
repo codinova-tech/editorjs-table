@@ -148,7 +148,9 @@ class Table {
         this.performAction.bind(this, actionName)
       );
       wrapper.appendChild(button);
-      this._tableConstructor.table.focusCellOnSelectedCell();
+      if(this._tableConstructor.table.selectedCell) {
+        this._tableConstructor.table.focusCellOnSelectedCell();
+      }
     });
     return wrapper;
   }
