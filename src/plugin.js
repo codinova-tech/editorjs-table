@@ -299,10 +299,15 @@ class Table {
       }
     }
     if(tag ==='TABLE') {
-      const tableBody = Array.from(element.childNodes);
-      const tableRows = Array.from(tableBody[0].childNodes);
-      data.config.rows = tableRows.length;
-      data.content = tableRows.map((tr) => {
+      let tableBody = Array.from(element.childNodes);
+      tableBody = tableBody.find(el => el.nodeName === 'TBODY');
+      let tableRows = Array.from(tableBody.childNodes);
+      tableRows = [tableRows].map(obj => {
+        const newObj = obj.filter((tr) => tr.nodeName === 'TR');
+        return newObj;
+      });
+      data.config.rows = tableRows[0].length;
+      data.content = tableRows[0].map((tr) => {
         let tableData = tr.childNodes;
         data.config.cols = tableData.length;
         tableData = [...tableData].map((td) => {
