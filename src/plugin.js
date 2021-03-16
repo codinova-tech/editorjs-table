@@ -303,8 +303,7 @@ class Table {
       tableBody = tableBody.find(el => el.nodeName === 'TBODY');
       let tableRows = Array.from(tableBody.childNodes);
       tableRows = [tableRows].map(obj => {
-        const newObj = obj.filter((tr) => tr.nodeName === 'TR');
-        return newObj;
+        return obj.filter((tr) => tr.nodeName === 'TR');
       });
       data.config.rows = tableRows[0].length;
       data.content = tableRows[0].map((tr) => {
