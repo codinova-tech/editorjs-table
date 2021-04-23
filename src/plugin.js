@@ -168,12 +168,12 @@ class Table {
       this._createTableConfiguration();
     } else  {
       // Create table preview if New table is initialised
-      this.wrapper.classList.add("table-selector");
+      this.wrapper.classList.add("tc-table-drawer-selector");
       this.wrapper.setAttribute("data-hoveredClass", "m,n");
       const rows = 6;
       this.createCells(rows);
       //Hover to select cells
-      if (this.wrapper.className === "table-selector") {
+      if (this.wrapper.className === "tc-table-drawer-selector") {
         this.wrapper.addEventListener("mouseover", (event) => {
           const selectedCell = event.target.id;
           if (selectedCell.length) {
@@ -206,12 +206,12 @@ class Table {
     if (rows !== 0) {
       for (let i = 0; i < rows; i++) {
         let rowDiv = document.createElement("div");
-        rowDiv.setAttribute("class", "table-row");
+        rowDiv.setAttribute("class", "tc-table-drawer-row");
         for (let j = 0; j < rows; j++) {
           let columnDivContainer = document.createElement("div");
           let columnDiv = document.createElement("div");
-          columnDivContainer.setAttribute("class", "table-cell-container");
-          columnDiv.setAttribute("class", "table-cell");
+          columnDivContainer.setAttribute("class", "tc-table-drawer-cell-container");
+          columnDiv.setAttribute("class", "tc-table-drawer-cell");
           columnDivContainer.setAttribute("id", `row_${i + 1}_cell_${j + 1}`);
           columnDivContainer.setAttribute("column", j + 1);
           columnDivContainer.setAttribute("row", i + 1);
