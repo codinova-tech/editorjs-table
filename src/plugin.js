@@ -244,7 +244,8 @@ class Table {
     this._tableConstructor = new TableConstructor(
       this.data,
       this.config,
-      this.api
+      this.api,
+      this.readOnly
     );
     this.wrapper.appendChild(this._tableConstructor.htmlElement);
   }
