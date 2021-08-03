@@ -70,7 +70,7 @@ class Table {
     this.config = config;
     this.data = data;
     this.readOnly = readOnly;
-    this._tableConstructor = new TableConstructor(data, config, api, readOnly);
+    this._tableConstructor = new TableConstructor({ data, config, api, readOnly });
 
     this.actions = [
       {
@@ -241,12 +241,12 @@ class Table {
 
   _createTableConfiguration() {
     this.wrapper.innerHTML = "";
-    this._tableConstructor = new TableConstructor(
-      this.data,
-      this.config,
-      this.api,
-      this.readOnly
-    );
+    this._tableConstructor = new TableConstructor({
+      data: this.data,
+      config: this.config,
+      api: this.api,
+      readOnly: this.readOnly,
+    });
     this.wrapper.appendChild(this._tableConstructor.htmlElement);
   }
   /**

@@ -20,7 +20,7 @@ export class TableConstructor {
    * @param {object} api - Editor.js API
    * @param {boolean} readOnly - read-only mode flag
    */
-  constructor(data, config, api, readOnly) {
+  constructor({ data, config, api, readOnly }) {
     /** creating table */
     this.readOnly = readOnly;
     this._table = new Table(readOnly);
