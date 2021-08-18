@@ -76,32 +76,32 @@ class Table {
       {
         actionName: "InsertColBefore",
         icon: Icons.InsertColBefore,
-        label: "Insert column before",
+        label: this.api.i18n.t("col_before"),
       },
       {
         actionName: "InsertColAfter",
         icon: Icons.InsertColAfter,
-        label: "Insert column after",
+        label: this.api.i18n.t("col_after"),
       },
       {
         actionName: "InsertRowBefore",
         icon: Icons.InsertRowBefore,
-        label: "Insert row before",
+        label: this.api.i18n.t("row_before"),
       },
       {
         actionName: "InsertRowAfter",
         icon: Icons.InsertRowAfter,
-        label: "Insert row after",
+        label: this.api.i18n.t("row_after"),
       },
       {
         actionName: "DeleteRow",
         icon: Icons.DeleteRow,
-        label: "Delete row",
+        label: this.api.i18n.t("delete_row"),
       },
       {
         actionName: "DeleteCol",
         icon: Icons.DeleteCol,
-        label: "Delete column",
+        label: this.api.i18n.t("delete_col"),
       },
     ];
   }
