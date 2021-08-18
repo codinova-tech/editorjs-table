@@ -18,10 +18,12 @@ export class TableConstructor {
    * @param {TableData} data - previously saved data for insert in table
    * @param {object} config - configuration of table
    * @param {object} api - Editor.js API
+   * @param {boolean} readOnly - read-only mode flag
    */
-  constructor(data, config, api) {
+  constructor({ data, config, api, readOnly }) {
     /** creating table */
-    this._table = new Table();
+    this.readOnly = readOnly;
+    this._table = new Table(readOnly);
     const size = this._resizeTable(data, config);
 
     this._fillTable(data, size);

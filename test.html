@@ -25,6 +25,8 @@
 </head>
 <body>
 
+<button type="button" onclick="toggleReadOnly()">Toggle readonly mode</button>
+
 <div id="editorjs"></div>
 </div>
 <div class="ce-example__output">
@@ -48,15 +50,19 @@
             rows: 0,
             cols: 0
           },
-          
+
         },
       },
       data : {
         blocks: [
-        
+
         ]
       },
     })
+
+    function toggleReadOnly () {
+      editor.readOnly.toggle();
+    }
 </script>
 </body>
 </html>
