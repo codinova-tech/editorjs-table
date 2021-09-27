@@ -16,14 +16,19 @@ const CSS = {
 export class Table {
   /**
    * Creates
+   * @param {boolean} readOnly - read-only mode flag
    */
-  constructor() {
+  constructor(readOnly) {
     this._numberOfColumns = 0;
     this._numberOfRows = 0;
     this._element = this._createTableWrapper();
     this._table = this._element.querySelector('table');
     this._selectedCell = null;
-    this._attachEvents();
+    this.readOnly = readOnly;
+    
+    if (!this.readOnly) {
+      this._attachEvents();
+    }
   }
 
   /**
@@ -190,7 +195,7 @@ export class Table {
    */
   _createTableWrapper() {
     return create('div', [ CSS.wrapper ], null, [
-      create('table', [ CSS.table ])  
+      create('table', [ CSS.table ])
       // This function can be updated so that it will render the table with the give config instead of 3x3
     ]);
   }
@@ -202,7 +207,7 @@ export class Table {
    * @return {HTMLElement} - the area
    */
   _createContenteditableArea() {
-    return create('div', [ CSS.inputField ], { contenteditable: 'true' });
+    return create('div', [ CSS.inputField ], { contenteditable: !this.readOnly });
   }
 
   /**

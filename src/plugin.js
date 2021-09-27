@@ -37,6 +37,14 @@ class Table {
   }
 
   /**
+   * Notify core that read-only mode is supported
+   * @returns {boolean}
+   */
+  static get isReadOnlySupported() {
+    return true;
+  }
+
+  /**
    * Get Tool toolbox settings
    * icon - Tool icon's SVG
    * title - title to show in toolbox
@@ -56,43 +64,49 @@ class Table {
    * @param {object} config - user config for Tool
    * @param {object} api - Editor.js API
    */
-  constructor({ data, config, api }) {
+  constructor({ data, config, api, readOnly }) {
     this.api = api;
     this.wrapper = undefined;
     this.config = config;
     this.data = data;
-    this._tableConstructor = new TableConstructor(data, config, api);
+    this.readOnly = readOnly;
+    this._tableConstructor = new TableConstructor({
+      data,
+      config,
+      api,
+      readOnly,
+    });
 
     this.actions = [
       {
         actionName: "InsertColBefore",
         icon: Icons.InsertColBefore,
-        label: "Insert column before",
+        label: this.api.i18n.t("col_before"),
       },
       {
         actionName: "InsertColAfter",
         icon: Icons.InsertColAfter,
-        label: "Insert column after",
+        label: this.api.i18n.t("col_after"),
       },
       {
         actionName: "InsertRowBefore",
         icon: Icons.InsertRowBefore,
-        label: "Insert row before",
+        label: this.api.i18n.t("row_before"),
       },
       {
         actionName: "InsertRowAfter",
         icon: Icons.InsertRowAfter,
-        label: "Insert row after",
+        label: this.api.i18n.t("row_after"),
       },
       {
         actionName: "DeleteRow",
         icon: Icons.DeleteRow,
-        label: "Delete row",
+        label: this.api.i18n.t("delete_row"),
       },
       {
         actionName: "DeleteCol",
         icon: Icons.DeleteCol,
-        label: "Delete column",
+        label: this.api.i18n.t("delete_col"),
       },
     ];
   }
@@ -148,7 +162,7 @@ class Table {
         this.performAction.bind(this, actionName)
       );
       wrapper.appendChild(button);
-      if(this._tableConstructor.table.selectedCell) {
+      if (this._tableConstructor.table.selectedCell) {
         this._tableConstructor.table.focusCellOnSelectedCell();
       }
     });
@@ -161,12 +175,25 @@ class Table {
    * @public
    */
   render() {
+    const container = document.createElement("div");
     this.wrapper = document.createElement("div");
 
-    if ((this.data && this.data.content)) {
+    this.titleWrapper = document.createElement("div");
+    this.titleWrapper.classList.add("base-plugin__titleWrapper");
+
+    this.title = document.createElement("span");
+    this.title.innerText = this.api.i18n.t("title");
+    this.title.classList.add("base-plugin__text");
+
+    this.titleWrapper.appendChild(this.title);
+
+    container.appendChild(this.titleWrapper);
+    container.appendChild(this.wrapper);
+
+    if (this.data && this.data.content) {
       //Creates table if Data is Present
       this._createTableConfiguration();
-    } else  {
+    } else {
       // Create table preview if New table is initialised
       this.wrapper.classList.add("table-selector");
       this.wrapper.setAttribute("data-hoveredClass", "m,n");
@@ -199,9 +226,9 @@ class Table {
         }
       });
     }
-    return this.wrapper;
+    return container;
   }
-  
+
   createCells(rows) {
     if (rows !== 0) {
       for (let i = 0; i < rows; i++) {
@@ -224,19 +251,20 @@ class Table {
         this.wrapper.appendChild(rowDiv);
       }
     }
-    const hiddenEl = document.createElement('input');
-    hiddenEl.classList.add('hidden-element');
-    hiddenEl.setAttribute('tabindex', 0);
+    const hiddenEl = document.createElement("input");
+    hiddenEl.classList.add("hidden-element");
+    hiddenEl.setAttribute("tabindex", 0);
     this.wrapper.appendChild(hiddenEl);
   }
 
   _createTableConfiguration() {
     this.wrapper.innerHTML = "";
-    this._tableConstructor = new TableConstructor(
-      this.data,
-      this.config,
-      this.api
-    );
+    this._tableConstructor = new TableConstructor({
+      data: this.data,
+      config: this.config,
+      api: this.api,
+      readOnly: this.readOnly,
+    });
     this.wrapper.appendChild(this._tableConstructor.htmlElement);
   }
   /**
@@ -248,7 +276,7 @@ class Table {
     const table = toolsContent.querySelector("table");
     const data = [];
     const rows = table ? table.rows : 0;
-    if(rows.length) {
+    if (rows.length) {
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         const cols = Array.from(row.cells);
@@ -259,12 +287,12 @@ class Table {
           continue;
         }
         data.push(inputs.map((input) => input.innerHTML));
+      }
+      return {
+        content: data,
+      };
     }
-    return {
-      content: data,
-    };
-  }  
-}
+  }
 
   /**
    * @private
@@ -279,31 +307,31 @@ class Table {
 
   static get pasteConfig() {
     return {
-      tags: ['TABLE', 'TR', 'TD', 'TBODY', 'TH'],
+      tags: ["TABLE", "TR", "TD", "TBODY", "TH"],
     };
   }
 
   async onPaste(event) {
     const table = event.detail.data;
-    this.data  = this.pasteHandler(table);
+    this.data = this.pasteHandler(table);
     this._createTableConfiguration();
   }
-  
+
   pasteHandler(element) {
-    const {tagName: tag} = element;
+    const { tagName: tag } = element;
     const data = {
       content: [],
       config: {
         rows: 0,
-        cols: 0
-      }
-    }
-    if(tag ==='TABLE') {
+        cols: 0,
+      },
+    };
+    if (tag === "TABLE") {
       let tableBody = Array.from(element.childNodes);
-      tableBody = tableBody.find(el => el.nodeName === 'TBODY');
+      tableBody = tableBody.find((el) => el.nodeName === "TBODY");
       let tableRows = Array.from(tableBody.childNodes);
-      tableRows = [tableRows].map(obj => {
-        return obj.filter((tr) => tr.nodeName === 'TR');
+      tableRows = [tableRows].map((obj) => {
+        return obj.filter((tr) => tr.nodeName === "TR");
       });
       data.config.rows = tableRows[0].length;
       data.content = tableRows[0].map((tr) => {
@@ -313,11 +341,10 @@ class Table {
           return td.innerHTML;
         });
         return tableData;
-      })
+      });
     }
     return data;
   }
-
 }
 
 module.exports = Table;
